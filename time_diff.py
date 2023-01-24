@@ -14,6 +14,13 @@ def check_input(file: str) -> None:
             raise ValueError
         if os.stat(file).st_size == 0:
             raise ValueError
+        if not csv.Sniffer().has_header(file):
+            raise ValueError
+        with open(file, 'r') as f:
+            reader = csv.reader(f)
+            header = next(reader)
+            if len(header) < 2 or not header[0] == 'start_time' or not header[1] == 'stop_time':
+                raise ValueError
     except FileNotFoundError:
         print('File not found')
         sys.exit(1)
@@ -59,7 +66,7 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
 def main():
     '''Main function'''
     if not len(sys.argv) == 2:
-        print('Usage: $> python3 time_diff.py <file.csv>')
+        print('Usage: $> python3 time_diff.py <dataset.csv>')
         sys.exit(1)
 
     file = sys.argv[1]
@@ -71,8 +78,8 @@ def main():
     # format is now hh:mm, add a 3rd column with the difference
     df['diff_time'] = pd.to_datetime(df['stop_time'], format='%H:%M') - \
         pd.to_datetime(df['start_time'], format='%H:%M')
-    # print in a csv file
-    df.to_csv('output.csv', index=False)
+    # print in a csv file which will have the same name as the input file with '_diff' added
+    df.to_csv(file[:-4] + '_diff.csv', index=False)
 
 
 if __name__ == '__main__':
