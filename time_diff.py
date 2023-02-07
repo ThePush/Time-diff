@@ -6,7 +6,12 @@ import re
 
 
 def check_input(file: str) -> None:
-    '''Check if the input file is valid'''
+    '''
+    Check if the input file is valid. Exit with an error if it is not.
+
+    Parameters:
+        file (str): the input file
+    '''
     try:
         if not os.path.exists(file):
             raise FileNotFoundError
@@ -30,7 +35,15 @@ def check_input(file: str) -> None:
 
 
 def convert_to_24h(time: str) -> str:
-    '''Convert the time from 12h to 24h format'''
+    '''
+    Convert the time from 12h to 24h format.
+
+    Parameters:
+        time (str): the time in 12h format (hh:mmam/pm)
+
+    Returns:
+        str: the time in 24h format
+    '''
     match = re.match(r'(\d+):(\d+)(am|pm)', time)
     if match:
         hour, minute, period = match.groups()
@@ -45,7 +58,15 @@ def convert_to_24h(time: str) -> str:
 
 
 def clean_data(df: pd.DataFrame) -> pd.DataFrame:
-    '''Clean the dataset'''
+    '''
+    Clean the dataset.
+
+    Parameters:
+        df (pd.DataFrame): the dataset to clean
+
+    Returns:
+        pd.DataFrame: the cleaned dataset
+    '''
     # delete all rows with NaN
     df = df.dropna()
     df = df.replace({"a.m": "am", "p.m": "pm", " ": "", "\.": ":"}, regex=True)
@@ -64,7 +85,15 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def main():
-    '''Main function'''
+    '''
+    A program to calculate the difference between 2 times.
+
+    Parameters:
+        takes a csv file with 2 columns (start_time and stop_time) formatted as hh:mmam/pm.
+
+    Returns:
+        a csv file with the same name as the input file with '_diff' added, with 3 columns (start_time, stop_time, diff_time) where diff_time is the difference between stop_time and start_time.
+    '''
     if not len(sys.argv) == 2:
         print('Usage: $> python3 time_diff.py <dataset.csv>')
         sys.exit(1)
